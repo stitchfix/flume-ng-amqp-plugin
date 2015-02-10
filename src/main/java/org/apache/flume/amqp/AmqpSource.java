@@ -70,7 +70,7 @@ public class AmqpSource extends AbstractEventDrivenSource {
         boolean useMessageTimestamp = context.getBoolean(AmqpSourceConfigurationConstants.USE_MESSAGE_TIMESTAMP, false);
         int sourceId = SOURCE_ID.getAndIncrement();
 
-        EventBatchDeliveryListener deliverListener = new EventBatchDeliveryListener(this, sourceCounter, sourceId, useMessageTimestamp);
+        EventBatchDeliveryListener deliverListener = new SFEventBatchDeliveryListener(this, sourceCounter, sourceId, useMessageTimestamp);
 
         ConnectionFactory connectionFactory = createConnectionFactoryFrom(context);
         AmqpConsumer.Builder consumerBuilder = createConsumerBuilderFrom(context);
@@ -164,14 +164,14 @@ public class AmqpSource extends AbstractEventDrivenSource {
     }
 
     @VisibleForTesting
-    static class EventBatchDeliveryListener implements AmqpConsumer.BatchDeliveryListener {
+    public static class EventBatchDeliveryListener implements AmqpConsumer.BatchDeliveryListener {
         private final boolean useMessageTimestamp;
         private final Clock clock;
         private final Source source;
         private final SourceCounter sourceCounter;
         private final String sourceId;
 
-        private EventBatchDeliveryListener(Source source, SourceCounter sourceCounter, int sourceId, boolean useMessageTimestamp) {
+        public EventBatchDeliveryListener(Source source, SourceCounter sourceCounter, int sourceId, boolean useMessageTimestamp) {
             this(source, sourceCounter, sourceId, useMessageTimestamp, new SystemClock());
         }
 
@@ -222,7 +222,7 @@ public class AmqpSource extends AbstractEventDrivenSource {
          * @return new flume event
          */
         @VisibleForTesting
-        Event createEventFrom(QueueingConsumer.Delivery delivery) {
+        public Event createEventFrom(QueueingConsumer.Delivery delivery) {
             long timeInMS = -1;
 
             Map<String, String> eventHeaders = new HashMap<String, String>();
