@@ -268,6 +268,7 @@ class AmqpConsumer implements Runnable {
             // named queue or server generated
             if (queueName == null) {
                 queueName = channel.queueDeclare().getQueue();
+
             } else {
                 channel.queueDeclare(queueName, durableQueue, exclusiveQueue, autoDeleteQueue, null);
             }
@@ -275,10 +276,14 @@ class AmqpConsumer implements Runnable {
             if (bindings.length > 0) {
                 // multiple bindings
                 for (String binding : bindings) {
+                	  LOG.info("we are MP, johnny");
+
                     channel.queueBind(queueName, exchangeName, binding);
                 }
             } else {
                 // no binding given - this could be the case if it is a fanout exchange
+          	  LOG.info("we are NOT MP, johnny");
+
                 channel.queueBind(queueName, exchangeName, Constants.AMQP.SERVER_GENERATED_QUEUE_NAME);
             }
         }
