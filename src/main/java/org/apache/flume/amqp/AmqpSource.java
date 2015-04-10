@@ -117,7 +117,7 @@ public class AmqpSource extends AbstractEventDrivenSource {
             throw new IllegalArgumentException(AmqpSourceConfigurationConstants.EXCHANGE_NAME
                     + " and " + AmqpSourceConfigurationConstants.QUEUE_NAME + " cannot both be null");
         }
-        
+                
         AmqpConsumer.Builder builder = AmqpConsumer.newBuilder()
                 .setExchangeName(context.getString(AmqpSourceConfigurationConstants.EXCHANGE_NAME))
                 .setExchangeType(context.getString(AmqpSourceConfigurationConstants.EXCHANGE_TYPE, Constants.Defaults.EXCHANGE_TYPE))
@@ -137,6 +137,19 @@ public class AmqpSource extends AbstractEventDrivenSource {
         }
 
         builder.setBindings(bindings);
+
+        //check if custom env variables have been set
+    	
+    	if(System.getenv("flume_env-queueName") != null)
+    		builder.setQueueName(System.getenv("flume_env-queueName"));
+    	if(System.getenv("flume_env-virtualHost") != null)
+    		builder.setQueueName(System.getenv("flume_env-virtualHost"));
+    	if(System.getenv("flume_env-RMQpassword") != null)
+    		builder.setQueueName(System.getenv("flume_env-RMQpassword"));
+    	if(System.getenv("flume_env-userName") != null)
+    		builder.setQueueName(System.getenv("flume_env-userName"));
+    	if(System.getenv("flume_env-host") != null)
+    		builder.setQueueName(System.getenv("flume_env-host"));     
 
         return builder;
     }

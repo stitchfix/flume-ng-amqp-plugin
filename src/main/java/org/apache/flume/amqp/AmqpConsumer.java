@@ -276,8 +276,6 @@ class AmqpConsumer implements Runnable {
             if (bindings.length > 0) {
                 // multiple bindings
                 for (String binding : bindings) {
-                	  LOG.info("we are MP, johnny");
-
                     channel.queueBind(queueName, exchangeName, binding);
                 }
             } else {
