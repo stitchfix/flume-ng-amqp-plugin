@@ -138,22 +138,12 @@ public class AmqpSource extends AbstractEventDrivenSource {
 
         builder.setBindings(bindings);
 
-        //check if custom env variables have been set
-    	
-    	if(System.getenv("flume_env-queueName") != null)
-    		builder.setQueueName(System.getenv("flume_env-queueName"));
-    	if(System.getenv("flume_env-virtualHost") != null)
-    		builder.setQueueName(System.getenv("flume_env-virtualHost"));
-    	if(System.getenv("flume_env-RMQpassword") != null)
-    		builder.setQueueName(System.getenv("flume_env-RMQpassword"));
-    	if(System.getenv("flume_env-userName") != null)
-    		builder.setQueueName(System.getenv("flume_env-userName"));
-    	if(System.getenv("flume_env-host") != null)
-    		builder.setQueueName(System.getenv("flume_env-host"));     
+        //check if custom env variables have been set and update if so
+    	if(System.getenv("FOUNTAIN_RMQ_QUEUENAME") != null)
+    		builder.setQueueName(System.getenv("FOUNTAIN_RMQ_QUEUENAME"));  
 
         return builder;
     }
-
     @VisibleForTesting
     static ConnectionFactory createConnectionFactoryFrom(Context context) {
         String host = context.getString(AmqpSourceConfigurationConstants.HOST, Constants.Defaults.HOST);
@@ -164,6 +154,18 @@ public class AmqpSource extends AbstractEventDrivenSource {
         int connectionTimeout = context.getInteger(AmqpSourceConfigurationConstants.CONNECTION_TIMEOUT, Constants.Defaults.CONNECTION_TIMEOUT);
         int requestHeartbeat = context.getInteger(AmqpSourceConfigurationConstants.REQUEST_HEARTBEAT, Constants.Defaults.REQUESTED_HEARTBEAT);
 
+        //check if custom env variables have been set and update if so
+    	if(System.getenv("FOUNTAIN_RMQ_VIRTUALHOST") != null)
+    		virtualHost = System.getenv("FOUNTAIN_RMQ_VIRTUALHOST");
+    	if(System.getenv("FOUNTAIN_RMQ_PASSWORD") != null)
+    		password = System.getenv("FOUNTAIN_RMQ_PASSWORD");
+    	if(System.getenv("FOUNTAIN_RMQ_USERNAME") != null)
+    		userName = System.getenv("FOUNTAIN_RMQ_USERNAME");
+    	if(System.getenv("FOUNTAIN_RMQ_HOST") != null)
+    		host = System.getenv("FOUNTAIN_RMQ_HOST");   
+    	if(System.getenv("FOUNTAIN_RMQ_PORT") != null)
+    		port = Integer.parseInt(System.getenv("FOUNTAIN_RMQ_PORT"));   
+    	
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.setHost(host);
         connectionFactory.setPort(port);
